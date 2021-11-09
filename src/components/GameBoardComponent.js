@@ -1,19 +1,20 @@
 import React from 'react';
 import { addHighScore, useGlobalState } from '../context';
-import { addItemsInNewPosition, alertTypes, cloneDeep, isValueExist, KEYS, useEventHandler } from '../utilities/Utils';
+import { addItemsInNewPosition, alertTypes, cloneDeep, isValueExist, KEYS, useEventHandler, UseHasChanged } from '../utilities/Utils';
 import Cubicleomponent from './CubicleComponent';
 import FooterComponent from './FooterComponent';
 import HeaderComponent from './HeaderComponent';
 import showAlert  from '../utilities/Messages';
+import { useSwipeable } from 'react-swipeable';
 
 const GameBoardComponent = () => {
     const globalState = useGlobalState().globalState;
     const dispatch = useGlobalState().dispatch;
     const START_DATA = Array(4).fill().map(() => Array(4).fill(0));
     const [gameData, setGameData] = React.useState(START_DATA);
-    const [isWon, setIsWon] = React.useState(false);
     const [score, setScore] = React.useState(0);
     const newHighScore = React.useRef(true);
+    const [lastMove, setLastMove] = React.useState();
     React.useEffect(() => {
         if (score > globalState.highScore) {
             addHighScore(dispatch, score);
@@ -22,23 +23,21 @@ const GameBoardComponent = () => {
                 newHighScore.current = false;
             }
         }
-    }, [score])
+    }, [score]);
     React.useEffect(() => {
         showAlert(alertTypes.START,newGameOnClick);
     }, [])
+    const handlers = useSwipeable({
+        onSwipedLeft: () => moveLeft(),
+        onSwipedUp: () => moveUp(),
+        onSwipedRight: () => moveRight(),
+        onSwipedDown: () => moveDown(),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true
+      });
     const moveLeft = (isMove = true) => {
-        debugger
         let oldData = gameData;
         let newGameData = cloneDeep(gameData);
-
-        // if (replayStatus) {
-        //   return;
-        // }
-
-        // if (undoMoves.length) {
-        //   setUndoMoves([]);
-        // }
-
         for (let i = 0; i < 4; i++) {
             let b = newGameData[i];
             let slow = 0;
@@ -221,13 +220,12 @@ const GameBoardComponent = () => {
         if (JSON.stringify(oldData) !== JSON.stringify(newGameData)) {
             //setMoveHistory([...moveHistory, oldGrid]);
             if (isValueExist(newGameData, 2048)) {
-                setIsWon(true);
                 setGameData(newGameData);
                 showAlert(alertTypes.WON,newGameOnClick);
             } else newGameData = addItemsInNewPosition(newGameData);
         } else if (isMove && checkGameOver()) {
-            alert('Game Over');
-            //showAlert(alertTypes.GAMEOVER,newGameOnClick);
+           // alert('Game Over');
+            showAlert(alertTypes.GAMEOVER,newGameOnClick);
         }
 
         if (isMove) {
@@ -235,12 +233,6 @@ const GameBoardComponent = () => {
         } else return newGameData;
     }
     const handleKeyDown = (event) => {
-        console.log(event);
-        debugger
-        // if (isWon) {
-        //     alert('congratulations');
-        //     return;
-        // }
         switch (event.keyCode) {
             case KEYS.left:
                 moveLeft();
@@ -260,7 +252,6 @@ const GameBoardComponent = () => {
     };
     const newGameOnClick = () => {
         let data = cloneDeep(addItemsInNewPosition(addItemsInNewPosition(START_DATA)));
-        debugger
         setGameData(data);
         setScore(0);
     }
@@ -273,11 +264,11 @@ const GameBoardComponent = () => {
         } else return true;
     }
     return (
-        <div className="container full-width">
+        <div className="container full-width" {...handlers}>
             <div className="row">
                 <HeaderComponent {...{ score }} />
             </div>
-            <div className="board-container container" tabIndex="-1" onKeyDown={handleKeyDown}>
+            <div className="board-container container shadow" tabIndex="-1" >
                 {useEventHandler('keydown', handleKeyDown)}
                 <div className="row">
                     {gameData.map((data) => {

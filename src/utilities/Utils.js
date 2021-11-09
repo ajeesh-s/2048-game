@@ -34,7 +34,6 @@ export const useEventHandler = (event, handler, passive = false) => {
 
  
 export const addItemsInNewPosition = (newData) => {// add new values to random position
-  debugger
     let [rand1, rand2] = getNewPosition(newData);
 
     while (newData[rand1][rand2] !== 0) {

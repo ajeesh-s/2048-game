@@ -10,15 +10,15 @@ const HeaderComponent = (props) => {
         <>
             <div className="header row">
                 <div className="gamename">
-                    <img src={startImg} style={{ height: '150px' }} />
+                    <img className="shadow" src={startImg} style={{ height: '150px' }} />
                 </div>
             </div>
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between font-fam">
                 <div>
-                    <button type="button" class="btn btn-outline-primary">{`Score:`}<h2 class="card-title">{`${score}`}</h2></button>
+                    <button type="button" class="btn btn-outline-primary shadow">{`Score`}<h2 class="card-title">{`${score}`}</h2></button>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-outline-primary">{`High Score:`}<h2 class="card-title">{`${globalState.highScore}`}</h2></button>
+                    <button type="button" class="btn btn-outline-primary shadow">{`High Score`}<h2 class="card-title">{`${globalState.highScore}`}</h2></button>
                 </div>
             </div>
         </>

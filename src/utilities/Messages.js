@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content';
 import gameOverImg from '../assets/img/game-over.jpeg';
@@ -7,7 +7,7 @@ import winImg from '../assets/img/congrats.png';
 import highScoreImg from '../assets/img/high-score.jpeg';
 import { alertTypes } from './Utils';
 
-const showAlert = (type, newGameOnClick) => {
+const showAlert = (type, newGameOnClick, undoOnClick) => {
     const swalAlert = withReactContent(Swal);
     switch (type) {
         case alertTypes.START:
@@ -24,15 +24,18 @@ const showAlert = (type, newGameOnClick) => {
             break;
         case alertTypes.GAMEOVER:
             swalAlert.fire({
-                title: <img src={gameOverImg} style={{ height: '200px' }} />
-            }).then(() => {
-                return swalAlert.fire({
-                    title: <p>Come on play again...</p>,
-                    cancelButtonText: 'Cancel',
-                    confirmButtonText: 'Play Again',
-                    didClose: () => newGameOnClick()
+                title: <img src={gameOverImg} style={{ height: '200px' }} />,
+                showCancelButton: true,
+                cancelButtonText: 'Undo',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    return swalAlert.fire({
+                        title: <p>Let's play again...</p>,
+                        confirmButtonText: 'Play Again',
+                        didClose: () => newGameOnClick()
 
-                })
+                    })
+                }
             })
             break;
         case alertTypes.WON:
@@ -50,14 +53,14 @@ const showAlert = (type, newGameOnClick) => {
             break;
         case alertTypes.INSTRUCTIONS:
             swalAlert.fire({
-                title: <div><p className="instructions">HOW TO PLAY: Use your arrow keys to move the tiles.
+                title: <div><p className="instructions">HOW TO PLAY: Use your arrow keys/ swipe to move the tiles.
                     Tiles with the same number merge into one when they touch. Add them up to reach 2048!</p></div>
             })
             break;
         case alertTypes.HIGHSCORE:
             swalAlert.fire({
                 title: <p>Wow...New High Score.</p>,
-                iconHtml: <img src={highScoreImg} style={{height:'150px'}}/>
+                iconHtml: <img src={highScoreImg} style={{ height: '150px' }} />
             })
             break;
     }
