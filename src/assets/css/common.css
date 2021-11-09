@@ -1,0 +1,52 @@
+.full-width{
+  width: 420px !important;
+}
+.card-head{ 
+    width: 7rem;
+    height:5rem;
+    /* border-top-right-radius: 10px 10px;
+    border-top-left-radius: 50px 50px;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 50px 50px; */
+    box-shadow: 2px 2px 15px 2px #ccc;
+  }
+  .header{
+      padding-top: 20px;
+      
+  }
+  .cubicle{
+    font-family: "Open Sans", sans-serif;
+    color: white;
+    font-size: 3em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .cubicle-data{
+    border-radius: 2px;
+    height: 100px;
+    margin: 1rem;
+    position: relative;
+    width: 100px;
+  }
+  .board-container {
+    background-color: #b3bec2;
+    height: 370px;
+    width: 370px !important;
+  }
+  .board-container .row {
+    height: 100%;
+  }
+  .board-square {
+    border: 2px solid #b3bec2;
+    height: 25%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .gamename {
+    text-align: center;
+  }
+  .instructions{
+    text-align: justify;
+    font-size: smaller;
+  }
