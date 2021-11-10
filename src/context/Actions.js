@@ -1,4 +1,4 @@
 
-export const addHighScore = (dispatch,score) => {
-  dispatch({ type: 'HIGHSCORE' ,data: score});
+export const updateGlobalState = (dispatch,data) => {
+  dispatch({ type: 'GLOBALSTATE' ,data: data});
 }

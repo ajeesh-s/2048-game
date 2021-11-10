@@ -1,4 +1,4 @@
-import { addHighScore } from './Actions';
+import { updateGlobalState } from './Actions';
 import { GlobalStateProvider, useGlobalState } from './Context';
 
-export { GlobalStateProvider, useGlobalState, addHighScore};
+export { GlobalStateProvider, useGlobalState, updateGlobalState};

@@ -5,15 +5,15 @@ const initialStateValue = ManageLocalStorage.get("global_state")
   : "";
 
 export const initialState = initialStateValue ? initialStateValue : {
-  highScore: 0
+  highScore: 0, mileStone: 8
 };
 
 export const GlobalReducer = (initialState, action) => {
   switch (action.type) {
-    case "HIGHSCORE":
+    case "GLOBALSTATE":
       const stateValue = {
         ...initialState,
-        highScore:action.data
+        ...action.data
       };
       ManageLocalStorage.set('global_state', stateValue);
       return stateValue;

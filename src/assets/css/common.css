@@ -1,5 +1,6 @@
 body{
   overflow: hidden;
+  font-family: Inconsolata, monospace !important;
 }
 .full-width{
   width: 420px !important;
@@ -7,10 +8,6 @@ body{
 .card-head{ 
     width: 7rem;
     height:5rem;
-    /* border-top-right-radius: 10px 10px;
-    border-top-left-radius: 50px 50px;
-    border-bottom-left-radius: 5px 5px;
-    border-bottom-right-radius: 50px 50px; */
     box-shadow: 2px 2px 15px 2px #ccc;
   }
   .header{
@@ -20,11 +17,8 @@ body{
   .cubicle{
     color: white;
     font-size: 3em;
-    font-family: Inconsolata, monospace;
+    font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  .font-fam{
-    font-family: Inconsolata, monospace;
   }
   .cubicle-data{
     border-radius: 2px;
@@ -55,7 +49,32 @@ body{
   .gamename {
     text-align: center;
   }
+  .gamename img{
+    height: 150px;
+    margin-right: 20px;
+  }
   .instructions{
     text-align: justify;
     font-size: smaller;
+  }
+  .instructions ul {
+    font-size: 1rem;
+    line-height: 1.5em;
+    margin: 5px 0 15px;
+    padding: 0;
+  }
+  .instructions ul li {
+    list-style: none;
+    position: relative;
+    padding: 0 0 0 20px;
+  }
+  
+  .instructions ul.square li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff6600;
   }

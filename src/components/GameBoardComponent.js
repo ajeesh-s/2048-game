@@ -1,43 +1,76 @@
 import React from 'react';
-import { addHighScore, useGlobalState } from '../context';
-import { addItemsInNewPosition, alertTypes, cloneDeep, isValueExist, KEYS, useEventHandler, UseHasChanged } from '../utilities/Utils';
+import { updateGlobalState, useGlobalState } from '../context';
+import { addItemsInNewPosition, alertTypes, cloneDeep, getMaxValue, isValueExist, KEYS, useEventHandler } from '../utilities/Utils';
 import Cubicleomponent from './CubicleComponent';
 import FooterComponent from './FooterComponent';
 import HeaderComponent from './HeaderComponent';
-import showAlert  from '../utilities/Messages';
+import showAlert from '../utilities/Messages';
 import { useSwipeable } from 'react-swipeable';
 
 const GameBoardComponent = () => {
+
     const globalState = useGlobalState().globalState;
     const dispatch = useGlobalState().dispatch;
     const START_DATA = Array(4).fill().map(() => Array(4).fill(0));
     const [gameData, setGameData] = React.useState(START_DATA);
     const [score, setScore] = React.useState(0);
     const newHighScore = React.useRef(true);
-    const [lastMove, setLastMove] = React.useState();
+    const lastGameData = React.useRef();
+
     React.useEffect(() => {
         if (score > globalState.highScore) {
-            addHighScore(dispatch, score);
+            updateGlobalState(dispatch, { highScore: score });
             if (newHighScore.current) {
-                showAlert(alertTypes.HIGHSCORE,newGameOnClick);
+                showAlert(alertTypes.HIGHSCORE, newGameOnClick);
                 newHighScore.current = false;
             }
         }
     }, [score]);
+
     React.useEffect(() => {
-        showAlert(alertTypes.START,newGameOnClick);
+        showAlert(alertTypes.START, newGameOnClick);
     }, [])
-    const handlers = useSwipeable({
+
+    React.useEffect(() => {
+        let maxValue = getMaxValue(gameData);
+        if (maxValue > globalState.mileStone) {
+            updateGlobalState(dispatch, { mileStone: maxValue });
+            showAlert(alertTypes.MILESTONE, newGameOnClick, undefined, maxValue);
+        }
+    }, [gameData])
+
+    const swipeHandlers = useSwipeable({
         onSwipedLeft: () => moveLeft(),
         onSwipedUp: () => moveUp(),
         onSwipedRight: () => moveRight(),
         onSwipedDown: () => moveDown(),
         preventDefaultTouchmoveEvent: true,
         trackMouse: true
-      });
+    });
+
+    const undoOnClick = () => {
+        setGameData(lastGameData.current);
+    }
+
+    const handleKeyDown = (event) => {
+        switch (event.keyCode) {
+            case KEYS.left: moveLeft();
+                break;
+            case KEYS.up: moveUp();
+                break;
+            case KEYS.right: moveRight();
+                break;
+            case KEYS.down: moveDown();
+                break;
+            default:
+                break;
+        }
+    };
+
     const moveLeft = (isMove = true) => {
         let oldData = gameData;
         let newGameData = cloneDeep(gameData);
+        let scoreTemp = score;
         for (let i = 0; i < 4; i++) {
             let b = newGameData[i];
             let slow = 0;
@@ -60,7 +93,7 @@ const GameBoardComponent = () => {
                 } else if (b[slow] !== 0 && b[fast] !== 0) {
                     if (b[slow] === b[fast]) {
                         b[slow] = b[slow] + b[fast];
-                        setScore(score + b[slow]);
+                        scoreTemp += b[slow];
                         b[fast] = 0;
                         fast = slow + 1;
                         slow++;
@@ -71,21 +104,14 @@ const GameBoardComponent = () => {
                 }
             }
         }
-        return setGameDataFromChange(oldData, newGameData, isMove);
+        return setGameDataFromChange(oldData, newGameData, isMove, scoreTemp);
 
     }
+
     const moveUp = (isMove = true) => {
         let b = [...gameData];
-        let oldData = cloneDeep(gameData)
-
-        // if (replayStatus) {
-        //   return;
-        // }
-
-        // if (undoMoves.length) {
-        //   setUndoMoves([]);
-        // }
-
+        let oldData = cloneDeep(gameData);
+        let scoreTemp = score;
         for (let i = 0; i < 4; i++) {
             let slow = 0;
             let fast = 1;
@@ -107,7 +133,7 @@ const GameBoardComponent = () => {
                 } else if (b[slow][i] !== 0 && b[fast][i] !== 0) {
                     if (b[slow][i] === b[fast][i]) {
                         b[slow][i] = b[slow][i] + b[fast][i];
-                        setScore(score + b[slow][i]);
+                        scoreTemp += b[slow][i];
                         b[fast][i] = 0;
                         fast = slow + 1;
                         slow++;
@@ -118,20 +144,13 @@ const GameBoardComponent = () => {
                 }
             }
         }
-        return setGameDataFromChange(oldData, b, isMove);
+        return setGameDataFromChange(oldData, b, isMove, scoreTemp);
     };
+
     const moveRight = (isMove = true) => {
         let oldData = gameData;
         let newGameData = cloneDeep(gameData);
-
-        // if (replayStatus) {
-        //   return;
-        // }
-
-        // if (undoMoves.length) {
-        //   setUndoMoves([]);
-        // }
-
+        let scoreTemp = score;
         for (let i = 3; i >= 0; i--) {
             let b = newGameData[i];
             let slow = b.length - 1;
@@ -154,7 +173,7 @@ const GameBoardComponent = () => {
                 } else if (b[slow] !== 0 && b[fast] !== 0) {
                     if (b[slow] === b[fast]) {
                         b[slow] = b[slow] + b[fast];
-                        setScore(score + b[slow]);
+                        scoreTemp += b[slow];
                         b[fast] = 0;
                         fast = slow - 1;
                         slow--;
@@ -165,22 +184,14 @@ const GameBoardComponent = () => {
                 }
             }
         }
-        return setGameDataFromChange(oldData, newGameData, isMove);
+        return setGameDataFromChange(oldData, newGameData, isMove, scoreTemp);
 
     };
 
     const moveDown = (isMove = true) => {
         let b = [...gameData];
         let oldData = cloneDeep(gameData);
-
-        // if (replayStatus) {
-        //   return;
-        // }
-
-        // if (undoMoves.length) {
-        //   setUndoMoves([]);
-        // }
-
+        let scoreTemp = score;
         for (let i = 3; i >= 0; i--) {
             let slow = b.length - 1;
             let fast = slow - 1;
@@ -203,7 +214,7 @@ const GameBoardComponent = () => {
                 } else if (b[slow][i] !== 0 && b[fast][i] !== 0) {
                     if (b[slow][i] === b[fast][i]) {
                         b[slow][i] = b[slow][i] + b[fast][i];
-                        setScore(score + b[slow][i]);
+                        scoreTemp += b[slow][i];
                         b[fast][i] = 0;
                         fast = slow - 1;
                         slow--;
@@ -214,57 +225,42 @@ const GameBoardComponent = () => {
                 }
             }
         }
-        return setGameDataFromChange(oldData, b, isMove)
+        return setGameDataFromChange(oldData, b, isMove, scoreTemp)
     };
-    const setGameDataFromChange = (oldData, newGameData, isMove) => {
+
+    const setGameDataFromChange = (oldData, newGameData, isMove, scoreTemp) => {
         if (JSON.stringify(oldData) !== JSON.stringify(newGameData)) {
-            //setMoveHistory([...moveHistory, oldGrid]);
-            if (isValueExist(newGameData, 2048)) {
+            lastGameData.current = oldData;
+            if (isValueExist(newGameData, 32)) {
                 setGameData(newGameData);
-                showAlert(alertTypes.WON,newGameOnClick);
+                showAlert(alertTypes.WON, newGameOnClick);
             } else newGameData = addItemsInNewPosition(newGameData);
         } else if (isMove && checkGameOver()) {
-           // alert('Game Over');
-            showAlert(alertTypes.GAMEOVER,newGameOnClick);
+            showAlert(alertTypes.GAMEOVER, newGameOnClick, undoOnClick);
         }
 
         if (isMove) {
             setGameData(newGameData);
+            setScore(scoreTemp);
         } else return newGameData;
     }
-    const handleKeyDown = (event) => {
-        switch (event.keyCode) {
-            case KEYS.left:
-                moveLeft();
-                break;
-            case KEYS.up:
-                moveUp();
-                break;
-            case KEYS.right:
-                moveRight();
-                break;
-            case KEYS.down:
-                moveDown();
-                break;
-            default:
-                break;
-        }
-    };
+
     const newGameOnClick = () => {
         let data = cloneDeep(addItemsInNewPosition(addItemsInNewPosition(START_DATA)));
         setGameData(data);
         setScore(0);
     }
+
     const checkGameOver = () => {
         if (isValueExist(gameData, 0))
             return false;
         let data = [JSON.stringify(moveLeft(false)), JSON.stringify(moveUp(false)), JSON.stringify(moveRight(false)), JSON.stringify(moveDown(false))];
-        if (data.indexOf(JSON.stringify(gameData)) === -1) {
-            return false;
-        } else return true;
+        const allEqual = data.every(v => v === JSON.stringify(gameData))
+        if (allEqual) return true;
     }
+
     return (
-        <div className="container full-width" {...handlers}>
+        <div className="container full-width" {...swipeHandlers}>
             <div className="row">
                 <HeaderComponent {...{ score }} />
             </div>
