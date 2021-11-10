@@ -1,4 +1,21 @@
-# Getting Started with Create React App
+# 2048 Game
+
+2048 is an easy and fun puzzle game. Even if you don't love numbers you will love this game. It is played on a 4x4 grid using the arrows or Swipe alternatively. Every time you press a key - all tiles slide. Tiles with the same value that bump into one-another are merged. Although there might be an optimal strategy to play, there is always some level of chance. If you beat the game and would like to master it, try to finish with a smaller score. That would mean that you finished with less moves.
+
+This game is mobile compatible and you can play it on any device - iPhone, iPad or any other smartphone.
+
+## How to play
+
+    * Swipe or Press arrow keys to move tiles in any direction (left, up, right, down)
+    * When tiles with the same number join, they merge into one.
+    * Make New HighScores and Milestones
+    * Join the tiles and get to the 2048 one!
+
+    Let's Play 😎
+
+
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
