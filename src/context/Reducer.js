@@ -5,7 +5,7 @@ const initialStateValue = ManageLocalStorage.get("global_state")
   : "";
 
 export const initialState = initialStateValue ? initialStateValue : {
-  highScore: 0, mileStone: 8
+  highScore: 0, mileStone: 64
 };
 
 export const GlobalReducer = (initialState, action) => {
