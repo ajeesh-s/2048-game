@@ -8,7 +8,7 @@ import showAlert from '../utilities/Messages';
 import { useSwipeable } from 'react-swipeable';
 
 const GameBoardComponent = () => {
-
+    const WONMILESTONE = 2048;
     const globalState = useGlobalState().globalState;
     const dispatch = useGlobalState().dispatch;
     const START_DATA = Array(4).fill().map(() => Array(4).fill(0));
@@ -231,7 +231,7 @@ const GameBoardComponent = () => {
     const setGameDataFromChange = (oldData, newGameData, isMove, scoreTemp) => {
         if (JSON.stringify(oldData) !== JSON.stringify(newGameData)) {
             lastGameData.current = oldData;
-            if (isValueExist(newGameData, 32)) {
+            if (isValueExist(newGameData, WONMILESTONE)) {
                 setGameData(newGameData);
                 showAlert(alertTypes.WON, newGameOnClick);
             } else newGameData = addItemsInNewPosition(newGameData);
